@@ -1,0 +1,15 @@
+services:
+  dashboard:
+    build:
+      context: .
+      args:
+        # Leave empty so the SPA uses same-origin /api, proxied by nginx below.
+        VITE_API_BASE_URL: ""
+    ports:
+      - "8080:80"
+    environment:
+      # Where nginx forwards /api and /health. Point this at your FastAPI backend.
+      BACKEND_URL: "http://host.docker.internal:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
