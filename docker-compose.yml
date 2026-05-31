@@ -1,11 +1,6 @@
 services:
   api:
-    image: ${AIQ_API_IMAGE:-ai_question_api}:${AIQ_API_TAG:-latest}
-    build:
-      context: ../AI_Question
-      dockerfile: Dockerfile
-      args:
-        INSTALL_TEXLIVE: "${INSTALL_TEXLIVE:-false}"
+    image: ${AIQ_API_IMAGE:-ghcr.io/cphos/ai_question}:${AIQ_API_TAG:-latest}
     restart: unless-stopped
     env_file:
       - .env
@@ -23,10 +18,7 @@ services:
       start_period: 20s
 
   dashboard:
-    image: ${AIQ_WEB_IMAGE:-ai_question_dashboard}:${AIQ_WEB_TAG:-latest}
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${AIQ_WEB_IMAGE:-ghcr.io/cphos/ai_question_dashboard}:${AIQ_WEB_TAG:-latest}
     restart: unless-stopped
     depends_on:
       api:

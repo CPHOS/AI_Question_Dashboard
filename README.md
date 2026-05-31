@@ -87,29 +87,35 @@ npm run format     # Prettier 格式化 src
 
 ### 一键启动（API + Dashboard）
 
-> 在**前端仓库根目录**执行。一个 `.env` 文件覆盖前后端全部配置。
+> 两个文件，一个 env，一行命令。无需 clone 仓库。
 
 ```bash
-# 1. 复制并编辑环境文件（一份文件涵盖 api 和 dashboard 全部可配项）
-cp compose.prod.env.example .env
-# 编辑 .env，必填项：
-#   - ADMIN_BOOTSTRAP_TOKEN   (python -c "import secrets; print(secrets.token_urlsafe(32))")
-#   - OPENROUTER_API_KEY      (LLM 服务商密钥)
-#   其余有默认值，按需修改
+# 1. 下载 compose 和 env
+curl -O https://raw.githubusercontent.com/CPHOS/AI_Question_Dashboard/main/docker-compose.yml
+curl -O https://raw.githubusercontent.com/CPHOS/AI_Question_Dashboard/main/compose.prod.env.example
 
-# 2. 一键启动
+# 2. 配置
+cp compose.prod.env.example .env
+# 编辑 .env，必填：
+#   OPENROUTER_API_KEY=sk-or-...
+#   ADMIN_BOOTSTRAP_TOKEN=<随机字符串>
+
+# 3. 启动（自动从 ghcr.io 拉取镜像）
 docker compose up -d
 
-# 3. 访问 http://localhost  (或 http://localhost:<AIQ_WEB_PORT>)
+# 4. 访问 http://localhost
 ```
 
-### 仅构建 Dashboard 镜像
+### 本地构建（开发/调试）
+
+需要 clone 仓库，compose 使用 `build:` 本地构建而非拉取镜像：
 
 ```bash
-docker build -t ai-question-dashboard .
-
-# 运行（需已有后端在运行）
-docker run -p 8080:80 -e BACKEND_URL=http://host.docker.internal:8000 ai-question-dashboard
+git clone https://github.com/CPHOS/AI_Question_Dashboard.git
+git clone https://github.com/CPHOS/AI_Question.git
+cd AI_Question_Dashboard
+cp compose.prod.env.example .env
+docker compose up -d --build
 ```
 
 ### 子目录部署
