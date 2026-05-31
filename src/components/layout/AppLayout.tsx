@@ -20,7 +20,7 @@ import { useAuth } from '@/auth/AuthContext';
 import { getHealth, getVersion } from '@/api/system';
 import HeaderControls from './HeaderControls';
 
-const { Header, Sider, Content, Footer } = Layout;
+const { Header, Sider, Content } = Layout;
 const { useBreakpoint } = Grid;
 
 export default function AppLayout() {
@@ -132,12 +132,36 @@ export default function AppLayout() {
     />
   );
 
+  // Sidebar footer: version number only (health shown as a status dot + tooltip).
+  const versionFooter = version ? (
+    <Tooltip title={healthTooltip} placement="top">
+      <div
+        style={{
+          padding: '10px 16px',
+          borderTop: '1px solid rgba(128,128,128,0.2)',
+        }}
+      >
+        <Badge
+          status={healthBadgeStatus}
+          text={
+            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+              v{version.version}
+            </Typography.Text>
+          }
+        />
+      </div>
+    </Tooltip>
+  ) : null;
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {!isMobile && (
         <Sider theme="light" width={220} style={{ borderInlineEnd: '1px solid rgba(128,128,128,0.2)' }}>
-          {brand}
-          {menu}
+          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            {brand}
+            <div style={{ flex: 1, overflowY: 'auto' }}>{menu}</div>
+            {versionFooter}
+          </div>
         </Sider>
       )}
       <Layout>
@@ -169,20 +193,6 @@ export default function AppLayout() {
         <Content style={{ padding: 16 }}>
           <Outlet />
         </Content>
-        <Footer style={{ textAlign: 'center', padding: '12px 16px', color: 'rgba(128,128,128,0.85)' }}>
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-            <Tooltip title={healthTooltip}>
-              <Badge
-                status={healthBadgeStatus}
-                text={
-                  version
-                    ? `${version.name} v${version.version} · ${version.license}`
-                    : t('common.appShort')
-                }
-              />
-            </Tooltip>
-          </Typography.Text>
-        </Footer>
       </Layout>
 
       <Drawer
@@ -197,6 +207,7 @@ export default function AppLayout() {
         <div style={{ padding: 16, color: 'rgba(128,128,128,0.8)' }}>
           {t('auth.' + (role === 'admin' ? 'roleAdmin' : 'roleUser'))}
         </div>
+        {versionFooter}
       </Drawer>
     </Layout>
   );

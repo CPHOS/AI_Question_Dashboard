@@ -38,3 +38,100 @@ body {
   height: 70vh;
   border: none;
 }
+
+/* ---- Rich agent output ---- */
+.cphos-agent {
+  font-size: 14px;
+  line-height: 1.75;
+  word-break: break-word;
+}
+
+.cphos-agent-compact {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.cphos-agent-line {
+  margin: 0;
+}
+
+.cphos-agent-gap {
+  height: 8px;
+}
+
+.cphos-agent-lead {
+  margin-right: 4px;
+}
+
+.cphos-agent-ref {
+  color: #1677ff;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cphos-agent-block {
+  position: relative;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.03);
+  overflow-x: auto;
+}
+
+.cphos-agent-block-math {
+  text-align: center;
+}
+
+.cphos-agent-block-score {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+}
+
+.cphos-agent-raw {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  color: #cf1322;
+}
+
+.cphos-agent-figure {
+  margin: 12px 0;
+  padding: 10px 12px;
+  border: 1px dashed rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+  background: rgba(22, 119, 255, 0.04);
+}
+
+.cphos-agent-figure-caption {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.cphos-agent-figure-body {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.55);
+  white-space: pre-wrap;
+}
+
+[data-theme='dark'] .cphos-agent-block {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='dark'] .cphos-agent-figure {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(22, 119, 255, 0.1);
+}
+
+[data-theme='dark'] .cphos-agent-figure-body {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme='dark'] .cphos-agent-ref {
+  color: #4096ff;
+}
+
+[data-theme='dark'] .cphos-agent-raw {
+  color: #ff7875;
+}

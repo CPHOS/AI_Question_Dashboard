@@ -1,7 +1,7 @@
 {
   "common": {
-    "appName": "CPhOS Problem Generator",
-    "appShort": "CPhOS",
+    "appName": "CPHOS Problem Generator",
+    "appShort": "CPHOS",
     "submit": "Submit",
     "cancel": "Cancel",
     "create": "Create",
@@ -145,6 +145,18 @@
     "waiting": "Waiting…",
     "running": "Running…"
   },
+  "agentOutput": {
+    "scoreSuffix": " pts",
+    "figure": "Figure"
+  },
+  "timeline": {
+    "round": "Round {{round}}",
+    "roundShort": "R{{round}}",
+    "retry": {
+      "RETRY_PROBLEM": "Retry problem",
+      "RETRY_SOLUTION": "Retry solution"
+    }
+  },
   "reviewer": {
     "math": "Math Review",
     "physics": "Physics Review",
@@ -247,7 +259,18 @@
     "auto_compile_figures": "Auto-compile figures (TikZ)",
     "auto_compile_latex": "Auto-compile final LaTeX",
     "sse_poll_interval": "SSE poll interval (s)",
-    "sse_max_duration": "SSE max duration (s)"
+    "sse_max_duration": "SSE max duration (s)",
+    "latex_compile_timeout": "LaTeX compile timeout (s)",
+    "latex_compiler_backend": "LaTeX compiler backend",
+    "latex_service_base_url": "Remote compile service URL",
+    "latex_service_api_key": "Remote compile service API key",
+    "latex_service_poll_interval": "Remote compile poll interval (s)",
+    "latex_service_max_wait": "Remote compile max wait (s)",
+    "secretHint": "Leave blank to keep the current key",
+    "enum": {
+      "local": "Local",
+      "remote": "Remote service"
+    }
   },
   "health": {
     "overall": "Overall",

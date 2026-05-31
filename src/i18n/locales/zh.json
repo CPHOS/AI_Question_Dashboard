@@ -1,7 +1,7 @@
 {
   "common": {
-    "appName": "CPhOS 物理竞赛题生成系统",
-    "appShort": "CPhOS",
+    "appName": "CPHOS 物理竞赛题生成系统",
+    "appShort": "CPHOS",
     "submit": "提交",
     "cancel": "取消",
     "create": "创建",
@@ -145,6 +145,18 @@
     "waiting": "等待中…",
     "running": "进行中…"
   },
+  "agentOutput": {
+    "scoreSuffix": " 分",
+    "figure": "图"
+  },
+  "timeline": {
+    "round": "第 {{round}} 轮",
+    "roundShort": "第{{round}}轮",
+    "retry": {
+      "RETRY_PROBLEM": "重做题干",
+      "RETRY_SOLUTION": "重做解答"
+    }
+  },
   "reviewer": {
     "math": "数学审核",
     "physics": "物理审核",
@@ -247,7 +259,18 @@
     "auto_compile_figures": "自动编译图片（TikZ）",
     "auto_compile_latex": "自动编译最终 LaTeX",
     "sse_poll_interval": "SSE 推送轮询间隔（秒）",
-    "sse_max_duration": "SSE 连接最长存活（秒）"
+    "sse_max_duration": "SSE 连接最长存活（秒）",
+    "latex_compile_timeout": "LaTeX 编译超时（秒）",
+    "latex_compiler_backend": "LaTeX 编译后端",
+    "latex_service_base_url": "远程编译服务 URL",
+    "latex_service_api_key": "远程编译服务 API Key",
+    "latex_service_poll_interval": "远程编译轮询间隔（秒）",
+    "latex_service_max_wait": "远程编译最长等待（秒）",
+    "secretHint": "留空表示保留当前密钥",
+    "enum": {
+      "local": "本机（local）",
+      "remote": "远程服务（remote）"
+    }
   },
   "health": {
     "overall": "整体",

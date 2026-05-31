@@ -218,6 +218,11 @@ export interface ProgressEvent {
   seq: number;
   phase: PhaseName | string;
   phase_label?: string;
+  /** Stable id shared by the running/completed pair of one phase occurrence,
+   * e.g. "REVIEWING#2" — lets the frontend pair events without relying on order. */
+  occurrence_id?: string;
+  /** Retry round (1-based), derived from the state machine's retry counters. */
+  round?: number;
   status: ProgressEventStatus;
   output?: PhaseOutput | null;
   created_at: string;
@@ -445,6 +450,15 @@ export interface AppSettingsInfo {
   source_material_max_chars: number;
   auto_compile_figures: boolean;
   auto_compile_latex: boolean;
+  latex_compile_timeout: number;
+  latex_compiler_backend: string;
+  latex_service_base_url: string;
+  /** Whether a remote-compile API key is currently stored. */
+  latex_service_api_key_set: boolean;
+  /** Masked preview of the stored API key (e.g. "****1234"); never the raw key. */
+  latex_service_api_key_masked: string;
+  latex_service_poll_interval: number;
+  latex_service_max_wait: number;
   sse_poll_interval: number;
   sse_max_duration: number;
 }
@@ -454,6 +468,12 @@ export interface AppSettingsUpdate {
   source_material_max_chars?: number | null;
   auto_compile_figures?: boolean | null;
   auto_compile_latex?: boolean | null;
+  latex_compile_timeout?: number | null;
+  latex_compiler_backend?: 'local' | 'remote' | null;
+  latex_service_base_url?: string | null;
+  latex_service_api_key?: string | null;
+  latex_service_poll_interval?: number | null;
+  latex_service_max_wait?: number | null;
   sse_poll_interval?: number | null;
   sse_max_duration?: number | null;
 }
@@ -469,6 +489,8 @@ export interface AppSettingSpec {
   type: 'int' | 'float' | 'bool' | 'str' | string;
   min?: number | null;
   exclusiveMin?: number | null;
+  /** Allowed values for enum-like string settings, if the backend provides them. */
+  enum?: string[] | null;
 }
 
 /** Aggregated LLM / app-settings metadata for the admin UI. */

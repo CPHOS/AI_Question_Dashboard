@@ -7,16 +7,27 @@
 
 ---
 
-## 当前无待办项
+## 待办项
 
-截至最新 `openapi.json`，前端所需的后端能力均已具备，**暂无待补齐的 API 或契约问题**。
+### 🟢 在 `AppSettingSpec` 中暴露枚举型设置项的可选值
 
-历次提出的建议均已被后端采纳并由前端接入，包括但不限于：统一错误契约
-`ErrorResponse {code, detail}` 与 4xx 声明、SSE 端点的 `text/event-stream` 媒体类型、
-用户 / 令牌列表的 `q`/`order` 服务端检索、`/health` 的组件级 `HealthStatus`、
-`provider-kinds`/`options` 元数据端点、产物打包下载、任务重跑与按需编译等。
+**现状**：`GET /llm/options` 返回的 `app_settings`（`AppSettingSpec`）只提供
+`key` / `type` / `min` / `exclusiveMin`。其中 `latex_compiler_backend` 实际是枚举
+（`AppSettingsUpdate` 已约束为 `enum: ["local", "remote"]`），但 spec 仅将其类型标为
+`str`，未携带可选值。
 
-后续如发现新的缺口，将在此文档继续登记。
+**影响**：管理端「应用设置」表单无法从元数据得知这是个枚举，只能在前端**硬编码**
+候选值（见 `AdminLLMSettings.tsx` 的 `SETTING_ENUMS`）。今后后端若新增枚举设置或调整
+取值，前端需同步改动，存在契约漂移风险。
+
+**建议**：在 `AppSettingSpec` 增加可选字段 `enum?: string[]`（或 `choices`），由后端从
+`AppSettingsUpdate` 的字段约束派生。前端已支持读取 `spec.enum` 并优先据此渲染
+`Select`，后端补齐后即可移除前端硬编码回退。
+
+```jsonc
+// AppSettingSpec（建议增补 enum）
+{ "key": "latex_compiler_backend", "type": "str", "enum": ["local", "remote"] }
+```
 
 ---
 

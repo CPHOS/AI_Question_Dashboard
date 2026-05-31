@@ -448,6 +448,14 @@ function AgentsTab() {
 // App settings tab
 // ---------------------------------------------------------------------------
 
+/**
+ * Fallback enum choices for string settings whose spec doesn't carry an
+ * explicit `enum` (the backend currently types these as plain `str`).
+ */
+const SETTING_ENUMS: Record<string, string[]> = {
+  latex_compiler_backend: ['local', 'remote'],
+};
+
 function AppSettingsTab() {
   const { t } = useTranslation();
   const { message } = AntdApp.useApp();
@@ -494,15 +502,53 @@ function AppSettingsTab() {
             </Form.Item>
           );
         }
-        const isFloat = spec.type === 'float';
-        const min = spec.exclusiveMin != null ? spec.exclusiveMin : spec.min ?? undefined;
+        if (spec.type === 'int' || spec.type === 'float') {
+          const isFloat = spec.type === 'float';
+          const min = spec.exclusiveMin != null ? spec.exclusiveMin : spec.min ?? undefined;
+          return (
+            <Form.Item key={spec.key} name={spec.key} label={label}>
+              <InputNumber min={min} step={isFloat ? 0.1 : 1} style={{ width: '100%' }} />
+            </Form.Item>
+          );
+        }
+        // Enum-like string settings render as a Select (backend-provided enum,
+        // or a known fallback such as the LaTeX compiler backend toggle).
+        const choices = spec.enum ?? SETTING_ENUMS[spec.key];
+        if (choices?.length) {
+          return (
+            <Form.Item key={spec.key} name={spec.key} label={label}>
+              <Select
+                options={choices.map((c) => ({
+                  value: c,
+                  label: t(`settings.enum.${c}`, { defaultValue: c }),
+                }))}
+              />
+            </Form.Item>
+          );
+        }
+        // Secret string settings: never echo the stored key; show a masked hint
+        // and only send a new value when the admin types one.
+        const isSecret = /(api_key|secret|token|password)/i.test(spec.key);
+        if (isSecret) {
+          const masked = (data as Record<string, unknown> | undefined)?.[`${spec.key}_masked`];
+          return (
+            <Form.Item
+              key={spec.key}
+              name={spec.key}
+              label={label}
+              extra={t('settings.secretHint')}
+            >
+              <Input.Password
+                autoComplete="off"
+                placeholder={typeof masked === 'string' && masked ? masked : undefined}
+              />
+            </Form.Item>
+          );
+        }
+        // Plain string settings (e.g. latex_service_base_url) — text input.
         return (
           <Form.Item key={spec.key} name={spec.key} label={label}>
-            <InputNumber
-              min={min}
-              step={isFloat ? 0.1 : 1}
-              style={{ width: '100%' }}
-            />
+            <Input />
           </Form.Item>
         );
       })}
