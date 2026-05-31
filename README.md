@@ -48,12 +48,20 @@ npm run dev              # http://localhost:5173
 
 开发服务器将 `/api`、`/health`、`/version` 代理到 `VITE_DEV_PROXY_TARGET`（默认 `http://localhost:8000`），无需后端开启 CORS。
 
-### 环境变量
+### 环境变量（开发）
 
 | 变量 | 说明 | 默认 |
 |------|------|------|
-| `VITE_API_BASE_URL` | 运行时 API 基址；留空则用同源相对路径 `/api`（推荐配合反代） | 空 |
-| `VITE_DEV_PROXY_TARGET` | 仅开发：dev server 代理 `/api`、`/health`、`/version` 的目标 | `http://localhost:8000` |
+| `VITE_API_BASE_URL` | API 基址；留空则用同源相对路径 `/api`（配合 nginx 反代） | 空 |
+| `VITE_DEV_PROXY_TARGET` | 开发 server 代理 `/api`、`/health`、`/version` 的目标 | `http://localhost:8000` |
+
+### 环境变量（Docker 运行/部署）
+
+| 变量 | 说明 | 默认 |
+|------|------|------|
+| `BACKEND_URL` | nginx 反代 `/api`、`/health`、`/version` 等路径的后端地址 | `http://backend:8000` |
+| `VITE_API_BASE_URL` | 注入前端 JS 的 API 基址；留空则使用同源相对路径（经 nginx 反代） | 空 |
+| `BASE_PATH` | 子目录部署路径，如 `/ai-question`；留空则部署在根路径 `/` | 空 |
 
 ## 构建
 
@@ -66,24 +74,75 @@ npm run format     # Prettier 格式化 src
 
 ## Docker 部署
 
-镜像为多阶段构建：Node 构建 SPA → nginx 托管静态资源并反代 `/api`、`/health`、`/version` 到后端。
+### 镜像结构
 
-```bash
-# 构建
-docker build -t cphos-dashboard .
+多阶段构建：Node 构建 SPA → nginx 托管静态资源并反代 `/api`、`/health`、`/version`、`/docs` 等路径到后端。同一镜像通过**运行时占位符替换**支持任意子目录部署，无需重新构建。
 
-# 运行（将 API 反代到后端）
-docker run -p 8080:80 -e BACKEND_URL=http://<backend-host>:8000 cphos-dashboard
-# 访问 http://localhost:8080
+```
+容器内:
+  /usr/share/nginx/html/     ← Vite 构建产物 (dist/)
+  /etc/nginx/conf.d/         ← nginx 配置 (含 ${BACKEND_URL} 模板)
+  /docker-entrypoint.d/      ← 启动脚本 (运行时替换占位符 + envsubst)
 ```
 
-或使用 Compose：
+### 一键启动（API + Dashboard）
+
+> 在**前端仓库根目录**执行。一个 `.env` 文件覆盖前后端全部配置。
 
 ```bash
-docker compose up --build
+# 1. 复制并编辑环境文件（一份文件涵盖 api 和 dashboard 全部可配项）
+cp compose.prod.env.example .env
+# 编辑 .env，必填项：
+#   - ADMIN_BOOTSTRAP_TOKEN   (python -c "import secrets; print(secrets.token_urlsafe(32))")
+#   - OPENROUTER_API_KEY      (LLM 服务商密钥)
+#   其余有默认值，按需修改
+
+# 2. 一键启动
+docker compose up -d
+
+# 3. 访问 http://localhost  (或 http://localhost:<AIQ_WEB_PORT>)
 ```
 
-`BACKEND_URL` 在容器启动时由 `docker-entrypoint.sh` 通过 `envsubst` 注入 `nginx.conf`，因此**无需重新构建镜像**即可切换后端地址。前端代码默认请求同源路径，由 nginx 转发，避免 CORS；SSE 端点位于 `/api/` 下且 nginx 关闭了该 location 的 `proxy_buffering`，可正常流式推送。
+### 仅构建 Dashboard 镜像
+
+```bash
+docker build -t ai-question-dashboard .
+
+# 运行（需已有后端在运行）
+docker run -p 8080:80 -e BACKEND_URL=http://host.docker.internal:8000 ai-question-dashboard
+```
+
+### 子目录部署
+
+当需要将前端挂在前置 nginx（如 `https://example.com/ai-question/`）下时：
+
+**方案 A（推荐）：前置 nginx 裁剪前缀**
+
+```nginx
+# 外部 nginx
+location /ai-question/ {
+    proxy_pass http://127.0.0.1:8080/;   # 末尾 / 裁剪前缀
+}
+```
+此时 `BASE_PATH` 留空，容器内始终收到 `/` 开头的请求，无需额外配置。
+
+**方案 B：容器自带子目录**
+
+设置运行环境变量 `BASE_PATH=/ai-question`，容器启动脚本会将构建产物中所有路径引用替换为该前缀：
+
+```bash
+docker run -p 8080:80 -e BACKEND_URL=http://api:8000 -e BASE_PATH=/ai-question ai-question-dashboard
+```
+
+访问 `http://localhost:8080/ai-question/`。此时前置 nginx 不要裁剪前缀：
+
+```nginx
+location /ai-question/ {
+    proxy_pass http://127.0.0.1:8080/ai-question/;
+}
+```
+
+> 技术细节：构建时 Vite 在产物中写入占位符 `/__BASE_PATH__/`（`assets/__BASE_PATH__/index-xxx.js` 等）；运行时 `docker-entrypoint.sh` 将占位符替换为实际路径。React Router 同步使用 `import.meta.env.BASE_URL` 设置 `basename`。`VITE_API_BASE_URL` 采用相同机制（占位符 `__API_BASE__`）。
 
 ## 目录结构
 

@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => {
   const apiTarget = env.VITE_DEV_PROXY_TARGET || 'http://localhost:8000';
 
   return {
+    base: process.env.VITE_BASE_PATH || '/',
     plugins: [react()],
     resolve: {
       alias: {

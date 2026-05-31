@@ -36,6 +36,7 @@ function ThemedApp() {
     [mode],
   );
   const locale = i18n.language.startsWith('en') ? enUS : zhCN;
+  const basename = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
   return (
     <ConfigProvider
@@ -44,7 +45,7 @@ function ThemedApp() {
     >
       <AntdApp>
         <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
+          <BrowserRouter basename={basename}>
             <AuthProvider>
               <Routes>
                 <Route path="/login" element={<Login />} />
