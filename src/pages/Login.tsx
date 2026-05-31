@@ -4,6 +4,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/auth/AuthContext';
 import HeaderControls from '@/components/layout/HeaderControls';
+import logoUrl from '/favicon.png';
 
 export default function Login() {
   const { t } = useTranslation();
@@ -45,7 +46,7 @@ export default function Login() {
       </div>
       <Card style={{ width: 'min(420px, 100%)' }}>
         <div style={{ textAlign: 'center', marginBottom: 20 }}>
-          <img src="/favicon.png" alt="logo" width={48} height={48} style={{ borderRadius: 10 }} />
+          <img src={logoUrl} alt="logo" width={48} height={48} style={{ borderRadius: 10 }} />
           <Typography.Title level={4} style={{ marginTop: 12, marginBottom: 4 }}>
             {t('common.appName')}
           </Typography.Title>

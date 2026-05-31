@@ -19,6 +19,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/auth/AuthContext';
 import { getHealth, getVersion } from '@/api/system';
 import HeaderControls from './HeaderControls';
+import logoUrl from '/favicon.png';
 
 const { Header, Sider, Content } = Layout;
 const { useBreakpoint } = Grid;
@@ -115,7 +116,7 @@ export default function AppLayout() {
         overflow: 'hidden',
       }}
     >
-      <img src="/favicon.png" alt="logo" width={28} height={28} style={{ borderRadius: 6 }} />
+      <img src={logoUrl} alt="logo" width={28} height={28} style={{ borderRadius: 6 }} />
       <Typography.Text strong style={{ fontSize: 15, whiteSpace: 'nowrap' }}>
         {t('common.appShort')}
       </Typography.Text>
