@@ -378,6 +378,7 @@ export interface ProviderCreate {
   kind: string;
   api_key?: string;
   base_url?: string;
+  proxy?: string;
   timeout?: number;
   max_retries?: number;
 }
@@ -388,6 +389,8 @@ export interface ProviderUpdate {
   /** New API key; empty/omitted keeps the existing one. */
   api_key?: string | null;
   base_url?: string | null;
+  /** HTTP(S) proxy URL; empty/omitted keeps the existing one. */
+  proxy?: string | null;
   timeout?: number | null;
   max_retries?: number | null;
 }
@@ -397,6 +400,7 @@ export interface ProviderInfo {
   name: string;
   kind: string;
   base_url?: string;
+  proxy?: string;
   timeout?: number;
   max_retries?: number;
   api_key_set: boolean;

@@ -103,6 +103,7 @@ function ProvidersTab() {
       name: p.name,
       kind: p.kind,
       base_url: p.base_url,
+      proxy: p.proxy,
       timeout: p.timeout,
       max_retries: p.max_retries,
       api_key: '',
@@ -113,6 +114,7 @@ function ProvidersTab() {
     { title: t('llm.name'), dataIndex: 'name' },
     { title: t('llm.kind'), dataIndex: 'kind', render: (v: string) => <Tag>{v}</Tag> },
     { title: t('llm.baseUrl'), dataIndex: 'base_url', ellipsis: true, render: (v: string) => v || '—' },
+    { title: t('llm.proxy'), dataIndex: 'proxy', ellipsis: true, render: (v: string) => v || '—' },
     {
       title: t('llm.apiKey'),
       dataIndex: 'api_key_set',
@@ -199,6 +201,9 @@ function ProvidersTab() {
           </Form.Item>
           <Form.Item name="base_url" label={t('llm.baseUrl')}>
             <Input placeholder="https://…" />
+          </Form.Item>
+          <Form.Item name="proxy" label={t('llm.proxy')}>
+            <Input placeholder="http://mihomo:7890" />
           </Form.Item>
           <Space>
             <Form.Item name="timeout" label={t('llm.timeout')}>

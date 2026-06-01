@@ -229,6 +229,7 @@
     "apiKeyKeep": "留空表示保持现有 Key 不变。",
     "notSet": "未配置",
     "baseUrl": "Base URL",
+    "proxy": "HTTP 代理",
     "timeout": "超时（秒）",
     "maxRetries": "最大重试",
     "addProvider": "新增服务商",

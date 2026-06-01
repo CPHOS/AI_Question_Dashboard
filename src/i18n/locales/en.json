@@ -229,6 +229,7 @@
     "apiKeyKeep": "Leave empty to keep the existing key.",
     "notSet": "Not set",
     "baseUrl": "Base URL",
+    "proxy": "HTTP Proxy",
     "timeout": "Timeout (s)",
     "maxRetries": "Max Retries",
     "addProvider": "Add Provider",
